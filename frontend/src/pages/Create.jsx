@@ -201,14 +201,14 @@ const Create = () => {
           <Button onClick={() => next()} id="nextBtn">
             Next
           </Button>
-          <Button
+          {/* <Button
             onClick={() => {
               console.log("User Selections:", userSelections);
               console.log("User Choice:", userChoice);
             }}
           >
             Test
-          </Button>
+          </Button> */}
           {/* <Button
             onClick={() => {
               console.log("User Selections:", userSelections);
