@@ -8,15 +8,20 @@ import { useLocation } from "react-router-dom";
 const Result = () => {
   const { state } = useLocation();
   const { bg, kirby1, kirby2 } = state;
-  const kirbyChoices = Object.keys(
-    import.meta.glob("../assets/kirby/*.png")
-  ).map((key) => key.replace("..", "src"));
 
-  const backgroundChoices = Object.keys(
-    import.meta.glob("../assets/background/*.png")
-  ).map((key) => key.replace("..", "src"));
+  const kirbyImports = import.meta.glob("../assets/kirby/*.png", {
+    query: "?url",
+    import: "default",
+    eager: true,
+  });
+  const bgImports = import.meta.glob("../assets/background/*.png", {
+    query: "?url",
+    import: "default",
+    eager: true,
+  });
+  const kirbyChoices = Object.keys(kirbyImports);
+  const backgroundChoices = Object.keys(bgImports);
 
-  alert("Check your wild rift account<3");
   // console.log(`user picks ${bg}, ${kirby1}, ${kirby2}`);
 
   // console.log(kirbyChoices);
@@ -48,7 +53,8 @@ const Result = () => {
                     /> */}
             <Image
               id="kirby1Display"
-              src={kirbyChoices[kirby1]}
+              src={kirbyImports[kirbyChoices[kirby1]]}
+              // src = {import("")}
               alt="Kirby1_Display"
               objectFit={"contain"}
               boxSize={"3em"}
@@ -58,7 +64,7 @@ const Result = () => {
           <Image
             id="cardDisplay"
             alt="Card_Display"
-            src={backgroundChoices[bg]}
+            src={bgImports[backgroundChoices[bg]]}
             objectFit={"cover"}
             boxSize={"10em"}
           />
@@ -74,7 +80,7 @@ const Result = () => {
                     /> */}
             <Image
               id="kirby2Display"
-              src={kirbyChoices[kirby2]}
+              src={kirbyImports[kirbyChoices[kirby2]]}
               alt="Kirby2_Display"
               objectFit={"contain"}
               boxSize={"3em"}

@@ -7,7 +7,6 @@ import {
   Text,
   IconButton,
 } from "@chakra-ui/react";
-import transparent from "../assets/kirby/0.png";
 
 import { useNavigate } from "react-router-dom";
 
@@ -18,12 +17,38 @@ import {
 
 // import { PiRectangleDashedLight } from "react-icons/pi";
 
-const kirbyChoices = Object.keys(import.meta.glob("../assets/kirby/*.png")).map(
-  (key) => key.replace("..", "src")
-);
-const backgroundChoices = Object.keys(
-  import.meta.glob("../assets/background/*.png")
-).map((key) => key.replace("..", "src"));
+// const BASE_URL = import.meta.env.BASE_URL;
+// console.log("BASE_URL", BASE_URL);
+
+// const kirbyURL = new URL(`./assets/kirby/0.png`, import.meta.url).href;
+// const kirbyImports = import.meta.glob("../assets/kirby/*.png");
+
+// console.log("imagesURL: ", kirbyURL);
+// console.log("kirbyImports: ", kirbyImports);
+// console.log("kirby1 in Import: ", kirbyImports["../assets/kirby/0.png"]);
+
+// console.log("kirby1 in Import: ", kirbyImports["../assets/kirby/0.png"]());
+
+// const test = import.meta.glob("../assets/kirby/*.png");
+
+// const imgImports = import.meta.glob("../assets/kirby/*.png");
+// const bgImports = import.meta.glob("../assets/background/*.png");
+const kirbyImports = import.meta.glob("../assets/kirby/*.png", {
+  query: "?url",
+  import: "default",
+  eager: true,
+});
+const bgImports = import.meta.glob("../assets/background/*.png", {
+  query: "?url",
+  import: "default",
+  eager: true,
+});
+
+// console.log("kirbyImports: ", kirbyImports);
+// console.log("bgImports: ", bgImports);
+
+const kirbyChoices = Object.keys(kirbyImports);
+const backgroundChoices = Object.keys(bgImports);
 
 const Create = () => {
   let userChoice = 0;
@@ -32,13 +57,21 @@ const Create = () => {
   // const [userSelections, setUserSelections] = useState([]);
   const userSelections = [];
   //userSelections = [CardBG, FirstKirby, SecondKirby]
-  let currChoices;
+
   function changeSelection(choice) {
     //change the choices to display
+    let currChoices = [];
+    let currDisplay = "cardDisplay";
     if (isBGSelected) {
       currChoices = kirbyChoices;
+      if (userSelections.length === 2) {
+        currDisplay = "kirby2Display";
+      } else {
+        currDisplay = "kirby1Display";
+      }
     } else {
       currChoices = backgroundChoices;
+      currDisplay = "cardDisplay";
     }
 
     if (choice === "right") {
@@ -52,15 +85,10 @@ const Create = () => {
         userChoice = currChoices.length - 1;
       }
     }
-    if (isBGSelected) {
-      if (userSelections.length === 2) {
-        document.getElementById("kirby2Display").src = currChoices[userChoice];
-      } else {
-        document.getElementById("kirby1Display").src = currChoices[userChoice];
-      }
-    } else {
-      document.getElementById("cardDisplay").src = currChoices[userChoice];
-    }
+
+    document.getElementById(currDisplay).src = isBGSelected
+      ? kirbyImports[currChoices[userChoice]]
+      : bgImports[currChoices[userChoice]];
   }
 
   function back() {
@@ -75,19 +103,23 @@ const Create = () => {
     document.getElementById("nextBtn").textContent = "Next";
     if (userSelections.length > 0) {
       if (userSelections.length > 1) {
-        document.getElementById("kirby2Display").src = kirbyChoices[userChoice];
+        document.getElementById("kirby2Display").src =
+          kirbyImports[kirbyChoices[userChoice]];
         // document.getElementById("kirby1Selection").visibility = "visible";
       } else {
         //selecting kirby1
-        document.getElementById("kirby2Display").src = transparent;
-        document.getElementById("kirby1Display").src = kirbyChoices[userChoice];
+        document.getElementById("kirby2Display").src =
+          kirbyImports[kirbyChoices[0]];
+        document.getElementById("kirby1Display").src =
+          kirbyImports[kirbyChoices[userChoice]];
         // document.getElementById("kirby2Selection").visibility = "visible";
       }
     } else {
       //back to selecting bg
-      document.getElementById("kirby1Display").src = transparent;
+      document.getElementById("kirby1Display").src =
+        kirbyImports[kirbyChoices[0]];
       document.getElementById("cardDisplay").src =
-        backgroundChoices[userChoice];
+        bgImports[backgroundChoices[userChoice]];
       document.getElementById("title").textContent = "Pick Your Background";
       isBGSelected = false;
     }
@@ -152,7 +184,7 @@ const Create = () => {
               /> */}
               <Image
                 id="kirby1Display"
-                src={transparent}
+                src={kirbyImports[kirbyChoices[0]]}
                 alt="Kirby1_Display"
                 objectFit={"contain"}
                 boxSize={"3em"}
@@ -162,7 +194,7 @@ const Create = () => {
             <Image
               id="cardDisplay"
               alt="Card_Display"
-              src={backgroundChoices[0]}
+              src={bgImports[backgroundChoices[0]]}
               objectFit={"cover"}
               boxSize={"10em"}
             />
@@ -178,7 +210,7 @@ const Create = () => {
               /> */}
               <Image
                 id="kirby2Display"
-                src={transparent}
+                src={kirbyImports[kirbyChoices[0]]}
                 alt="Kirby2_Display"
                 objectFit={"contain"}
                 boxSize={"3em"}
@@ -205,6 +237,11 @@ const Create = () => {
             onClick={() => {
               console.log("User Selections:", userSelections);
               console.log("User Choice:", userChoice);
+              console.log("KirbyImages:", kirbyChoices);
+              console.log("BackgroundImages:", backgroundChoices);
+              // document.getElementById("cardDisplay").src =
+              //   kirbyImports["../assets/kirby/0.png"];
+              // document.getElementById("cardDisplay").src = import(&quot;/Greeting-card-generator/src/assets/kirby/0.png?import&quot;)
             }}
           >
             Test
@@ -219,6 +256,13 @@ const Create = () => {
             Done
           </Button> */}
         </HStack>
+        {/* <Image
+          id="testDisplay"
+          src={kirbyImports[kirbyChoices[3]]}
+          alt="test_Display"
+          objectFit={"contain"}
+          boxSize={"3em"}
+        /> */}
       </VStack>
     </Box>
   );

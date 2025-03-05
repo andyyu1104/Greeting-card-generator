@@ -1,7 +1,7 @@
 import { Button, Box, Image, VStack, Text } from "@chakra-ui/react";
 import { IoStar } from "react-icons/io5";
-import logo from "../assets/logo/0.png";
-import GCGText from "../assets/logo/1.png";
+import logo from "../assets/logo/logo0.png";
+import GCGText from "../assets/logo/logo1.png";
 import { Link } from "react-router-dom";
 
 const Welcome = () => {
